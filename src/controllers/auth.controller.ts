@@ -27,7 +27,8 @@ const login = async (req: Request, res: Response) => {
             }
         })
     }
-    res.send(String(nonce))
+
+    res.success({ nonce })
 }
 
 const me = async (req: Request, res: Response) => {
