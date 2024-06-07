@@ -58,8 +58,9 @@ const verify = async (req: Request, res: Response) => {
         }
 
         const token = jwt.sign({ address: siweMessage.address }, process.env.JWT_SECRET, { expiresIn: '2h' })
-
-        res.success({ token })
+        const data = await prisma.addresses.findFirst({ where: { address: { equals: siweMessage.address } } })
+        const { id, ...restData } = data || {}
+        res.success({ ...restData, token })
     } catch (error) {
         res.error('Failed to verify', 400)
     }
