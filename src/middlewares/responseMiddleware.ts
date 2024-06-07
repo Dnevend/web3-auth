@@ -1,3 +1,4 @@
+import { json } from 'body-parser'
 import { NextFunction, Request, Response } from 'express'
 
 const responseMiddleware = (req: Request, res: Response, next: NextFunction) => {
@@ -6,7 +7,11 @@ const responseMiddleware = (req: Request, res: Response, next: NextFunction) => 
         res.status(code).json({ code, msg, data })
     }
 
-    res.error = (code = 500, msg = 'Internal Server Error', data = null) => {
+    res.error = (msg = 'Internal Server Error', code = 500, data = null) => {
+        res.status(code).json({ code, msg, data })
+    }
+
+    res.authFail = (msg = "Invalid token", code = 401, data = null) => {
         res.status(code).json({ code, msg, data })
     }
 
@@ -17,7 +22,8 @@ declare global {
     namespace Express {
         interface Response {
             success: (data: any, code?: number, msg?: string) => void;
-            error: (code?: number, msg?: string, data?: any) => void;
+            error: (msg?: string, code?: number, data?: any) => void;
+            authFail: (msg?: string, code?: number, data?: any) => void;
         }
     }
 }

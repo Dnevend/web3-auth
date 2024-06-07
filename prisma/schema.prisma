@@ -12,7 +12,7 @@ model addresses {
   address    String?   @db.VarChar
   is_premium Boolean?
   create_at  DateTime? @default(now()) @db.Timestamp(6)
-  nonce      BigInt?
+  nonce      String?
 }
 
 model order {
