@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import routes from './routes';
 import responseMiddleware from './middlewares/responseMiddleware';
+import ethCronJob from './cron/eth.cron';
 
 dotenv.config();
 
@@ -16,6 +17,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(responseMiddleware);
 
 app.use(routes)
+
+ethCronJob.start();
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
