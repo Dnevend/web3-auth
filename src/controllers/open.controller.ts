@@ -7,14 +7,13 @@ const getEigenlayerAmounts = async (req: Request, res: Response) => {
   const { address } = req.query;
 
   try {
-    const response = await fetch(
+    const response = await axios.get(
       `https://checkeigen.byzantine.fi/api/getAmounts?address=${address}`
     );
 
-    if (response.ok) {
-      const data = await response.json();
-      res.success(data);
-    }
+    const data = response.data;
+
+    res.success(data);
   } catch (error) {
     res.error(String(error));
   }
