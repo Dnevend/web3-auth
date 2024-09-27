@@ -10,6 +10,7 @@ router.get("/", (req, res) => {
 
 router.use("/auth", authRoutes);
 
+router.get("/proxy", openController.fetchWithProxy);
 router.get("/eigen/amounts", openController.getEigenlayerAmounts);
 router.get("/eigen/credentials", openController.getEigenlayerCredentials);
 

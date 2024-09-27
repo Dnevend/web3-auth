@@ -3,12 +3,47 @@ import { HttpsProxyAgent } from "https-proxy-agent";
 import axios from "axios";
 import fakeUa from "fake-useragent";
 
+const fetchWithProxy = async (req: Request, res: Response) => {
+  const { url } = req.query;
+  if (!url) {
+    return res.status(400).json({ error: "URL is required" });
+  }
+
+  const proxyUrl = process.env.PROXY_URL;
+  const proxyAgent = proxyUrl ? new HttpsProxyAgent(proxyUrl) : undefined;
+
+  try {
+    const response = await axios.get(atob(url as string), {
+      headers: {
+        "user-agent": fakeUa(),
+      },
+      httpAgent: proxyAgent,
+      httpsAgent: proxyAgent,
+    });
+
+    res.success(response.data);
+  } catch (error) {
+    res.error(String(error));
+  }
+};
+
 const getEigenlayerAmounts = async (req: Request, res: Response) => {
   const { address } = req.query;
 
   try {
+    const proxyUrl = process.env.PROXY_URL;
+    const proxyAgent = proxyUrl ? new HttpsProxyAgent(proxyUrl) : undefined;
+
     const response = await axios.get(
-      `https://checkeigen.byzantine.fi/api/getAmounts?address=${address}`
+      `https://checkeigen.byzantine.fi/api/getAmounts?address=${address}`,
+      {
+        headers: {
+          "user-agent": fakeUa(),
+        },
+        httpAgent: proxyAgent,
+        httpsAgent: proxyAgent,
+        timeout: 30000,
+      }
     );
 
     const data = response.data;
@@ -45,4 +80,8 @@ const getEigenlayerCredentials = async (req: Request, res: Response) => {
   }
 };
 
-export default { getEigenlayerAmounts, getEigenlayerCredentials };
+export default {
+  fetchWithProxy,
+  getEigenlayerAmounts,
+  getEigenlayerCredentials,
+};
